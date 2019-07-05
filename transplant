@@ -1,0 +1,109 @@
+#!/usr/bin/env python3
+
+#############################################
+# transplant - build archive symlink forest #
+#################################################################
+# Written without copyright by Aeron Tynes Hammack Ⓐ LCFTA 2019
+# aeron@lcfta.com
+# http://lcfta.com
+#################################################################
+# Run script for guidelines on usage or read code below.
+# No warantee expressed or implied, use at your own judgement.
+# Think twice, run many, eat your wheaties
+#################################################################
+
+import sys
+import argparse
+import subprocess
+import os
+
+#DECLARATIONS
+
+#CLASSES
+# Fix argparser formating
+class SmartFormatter(argparse.HelpFormatter):
+    def _split_lines(self, text, width):
+        if text.startswith('R|'):
+            return text[2:].splitlines()  
+        # this is the RawTextHelpFormatter._split_lines
+        return argparse.HelpFormatter._split_lines(self, text, width)
+
+#FUNCTIONS
+def printProgress(percent, length):
+    width=int(percent/100 * length)
+    s = "#"*width
+    print(f'[{s.ljust(length,"-")}]')
+
+# DESCRITION
+parser = argparse.ArgumentParser( formatter_class=SmartFormatter,
+        description='Build a symlink forest that splits a collection of filesystem nodes into a forest of symlink tree root nodes whose contents are given by the total size of the data matched by the FIND string divided into trees with size MEDIASIZE [MiB] of the target media for an archive. A new root node will be planted to link branches against each time that the total running cumulative sum of the size exceeds a multiple of the MEDIASIZE. Requires the du and find commands. If things are taking a long time to display you likely have found a very large node with lots of large subnodes amoungst its children.',
+        epilog='Ex: transplant <mediasize> -maxdepth 1 -name \"lg-*\" --outdir /forest/location'
+        )
+
+# ARGUMENTS
+parser.add_argument('mediasize', metavar='MEDIASIZE', type=int, nargs='?', default=8583068,
+        help="R|The size of the media to base splitting on in units of MiB,\n"
+        "default = 8,583,068 MiB (~= 9,000,000 MB) or an LTO 7 Type M tape.\n\n"
+        "Generally,\n"
+        "1.000 GB\t= 1,000 MB\t≅ 953.6743 MiB\n"
+        "1,000 MiB\t≅ 1,048.5760 MB\t≅ 1.049 GB\n\n"
+        "Typical media sizes:\n"
+        "CD-R\t\t\t\t= 700 MiB,\n"
+        "DVD±R(W)\t\t= 4.70 GB\t= 4,482 MiB,\n"
+        "DVD±R DL\t\t= 8.55 GB\t= 8,153 MiB,\n"
+        "BD-R\t\t≅ 25.0 GB\t= 23,866 MiB,\n"
+        "BD-R DL\t\t≅ 50.0 GB\t= 47,732 MiB,\n"
+        "BDXL-3\t\t≅  100 GB\t= 95,466 MiB,\n"
+        "BDXL-4\t\t≅  128 GB\t= 122,072 MiB,\n"
+        "LTO-1\t\t=  100 GB\t≅ 95,367 MiB,\n"
+        "LTO-2\t\t=  200 GB\t≅ 190,735 MiB,\n"
+        "LTO-3\t\t=  400 GB\t≅ 381,469 MiB,\n"
+        "LTO-4\t\t=  800 GB\t≅ 762,939 MiB,\n"
+        "LTO-5\t\t= 1.50 TB\t≅ 1,430,511 MiB,\n"
+        "LTO-6\t\t= 2.50 TB\t≅ 2,384,185 MiB,\n"
+        "LTO-7\t\t= 6.00 TB\t≅ 5,722,045 MiB,\n"
+        "LTO-7 Type M\t= 9.00 TB\t≅ 8,583,068 MiB,\n"
+        "LTO-8\t\t= 12.0 TB\t≅ 11,444,091 MiB.\n\n")
+parser.add_argument('--find', metavar='FIND', type=str, nargs='?', default='. -maxdepth 1 -not -name \"*.forest\" -not -name .',
+                            help='The string passed to the find command to get path names for the filesystem nodes to place as first level branches to the trunk of the symlink tree. Be aware that by the nature of the beast this means that matches to items at multiple levels of the source tree can lead to replication of linked items in the symlink tree. For example, if a directory and its children match the find string, both the directory and the children will be grafted as top level branches, and the children will naturally be attached to the higher level parent directory as well. default = ". -maxdepth 1 -not -name \"*.forest\" -not -name .", or in other words, all items in the current directory without diving into subdirectories.')
+parser.add_argument('--outdir', metavar='OUTDIR', type=str, nargs='?', default='./out.forest',
+                            help='the target directory that the symlink tree will be deposited in, will be created if non-existent, default = "./out.forest"')
+parser.add_argument("--treenaming", metavar='TREENAMING', type=str, default='tree.000',
+                            help='the name for each of the trees in the symlink forest, default="tree.000", number of zeros indicates how many digits of padding when counting each container of MEDIASIZE.')
+
+
+
+# MAIN
+args = parser.parse_args()
+print(args);
+
+result = subprocess.run(f'find {args.find}', shell=True, stdout=subprocess.PIPE)
+cumsize=0
+bytes_per_MiB = 1048576
+mediasize=args.mediasize*bytes_per_MiB
+(treename,digits)=args.treenaming.split('.')
+digits=len(digits)
+for node in iter(result.stdout.decode("utf-8").splitlines()):
+    nodename = f'{os.path.abspath(node)}'
+    (du_size,du_name)=subprocess.check_output(f'du -sb {nodename}',shell=True).decode("utf-8").split('\t')
+    nodesize = int(du_size)
+    cumsize += nodesize
+    print(f"node name : {nodename}")
+    print(f"node size : {nodesize/bytes_per_MiB:12,.1f} MiB\tcumulative size : {cumsize/bytes_per_MiB:15,.1f} MiB;\tmediasize : {mediasize/bytes_per_MiB:12,.1f} MiB")
+    treetarget=f"{args.outdir}/{treename}.{str(cumsize//mediasize).zfill(digits)}"
+    print(f"adding to : {treetarget}")
+    printProgress( (cumsize%mediasize)/mediasize * 100, 80)
+    if nodesize > mediasize:
+        print("THIS NODE IS TOOOO BIG FOR MEDIA - SKIPPING")
+        continue
+    if not os.path.exists(f'{treetarget}'):
+        mkdircommand=f"mkdir -p {treetarget}"
+        subprocess.run(mkdircommand,shell=True)
+        print(f"added tree : {treetarget}")
+
+    linkcommand=f"ln -s {nodename} {treetarget}"
+    print(linkcommand)
+    result=subprocess.run(linkcommand,shell=True)
+    if result.returncode:
+        print("failure planting new tree or grafting the branch, link likely already exists")
+    print('\n')
