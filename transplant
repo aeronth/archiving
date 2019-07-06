@@ -97,16 +97,17 @@ for node in iter(result.stdout.decode("utf-8").splitlines()):
     (du_size,du_name)=subprocess.check_output(f'du -sb {nodename}',shell=True).decode("utf-8").split('\t')
     nodesize = int(du_size)
     cumsize += nodesize
+    tee(f"node name : {nodename}")
     try:
         md5sum = subprocess.check_output(f'md5sum {nodename}',shell=True).decode("utf-8").split()[0]
         sha256sum = subprocess.check_output(f'sha256sum {nodename}',shell=True).decode("utf-8").split()[0]
+        tee(f"md5sum: {md5sum}")
+        tee(f"sha256sum: {sha256sum}")
     except:
         md5sum = "N/A"
         sha256sum = "N/A"
-    tee(f"node name : {nodename}")
-    tee(f"md5sum: {md5sum}")
-    tee(f"sha256sum: {sha256sum}")
     tee(f"node size : {nodesize/bytes_per_MiB:12,.1f} MiB\tcumulative size : {cumsize/bytes_per_MiB:15,.1f} MiB;\tmediasize : {mediasize/bytes_per_MiB:12,.1f} MiB")
+
     treetarget=f"{args.outdir}/{treename}.{str(cumsize//mediasize).zfill(digits)}"
     tee(f"adding to : {treetarget}")
     printProgress( (cumsize%mediasize)/mediasize * 100, 80)
@@ -114,6 +115,11 @@ for node in iter(result.stdout.decode("utf-8").splitlines()):
         tee("THIS NODE IS TOOOO BIG FOR MEDIA - SKIPPING")
         continue
     if not os.path.exists(f'{treetarget}'):
+        if ( (cumsize//mediasize) - 1 ) > 0:
+            oldtree=f"{args.outdir}/{treename}.{str( (cumsize//mediasize) - 1 ).zfill(digits)}"
+            treecmd=f"tree -ls {oldtree} > {oldtree}.tree"
+            subprocess.run(treecmd,shell=True)
+        
         mkdircommand=f"mkdir -p {treetarget}"
         subprocess.run(mkdircommand,shell=True)
         tee(f"added tree : {treetarget}")
@@ -125,3 +131,5 @@ for node in iter(result.stdout.decode("utf-8").splitlines()):
         tee("failure planting new tree or grafting the branch, link likely already exists")
     tee('\n')
 logfile.close()
+treecmd=f"tree -ls {treetarget} > {treetarget}.tree"
+subprocess.run(treecmd,shell=True)
