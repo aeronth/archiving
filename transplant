@@ -75,7 +75,15 @@ parser.add_argument("--treenaming", metavar='TREENAMING', type=str, default='tre
 
 # MAIN
 args = parser.parse_args()
-print(args);
+#print(args);
+
+subprocess.run(f'mkdir -p {args.outdir}',shell=True)
+logfile = open(f'{args.outdir}/transplant.log', 'w')
+def tee(text, logfile=logfile):
+    print(text)
+    logfile.write(text+'\n')
+
+tee(f'building a symlink forest in {args.outdir}')
 
 result = subprocess.run(f'find {args.find}', shell=True, stdout=subprocess.PIPE)
 cumsize=0
@@ -83,27 +91,37 @@ bytes_per_MiB = 1048576
 mediasize=args.mediasize*bytes_per_MiB
 (treename,digits)=args.treenaming.split('.')
 digits=len(digits)
+
 for node in iter(result.stdout.decode("utf-8").splitlines()):
     nodename = f'{os.path.abspath(node)}'
     (du_size,du_name)=subprocess.check_output(f'du -sb {nodename}',shell=True).decode("utf-8").split('\t')
     nodesize = int(du_size)
     cumsize += nodesize
-    print(f"node name : {nodename}")
-    print(f"node size : {nodesize/bytes_per_MiB:12,.1f} MiB\tcumulative size : {cumsize/bytes_per_MiB:15,.1f} MiB;\tmediasize : {mediasize/bytes_per_MiB:12,.1f} MiB")
+    try:
+        md5sum = subprocess.check_output(f'md5sum {nodename}',shell=True).decode("utf-8").split()[0]
+        sha256sum = subprocess.check_output(f'sha256sum {nodename}',shell=True).decode("utf-8").split()[0]
+    except:
+        md5sum = "N/A"
+        sha256sum = "N/A"
+    tee(f"node name : {nodename}")
+    tee(f"md5sum: {md5sum}")
+    tee(f"sha256sum: {sha256sum}")
+    tee(f"node size : {nodesize/bytes_per_MiB:12,.1f} MiB\tcumulative size : {cumsize/bytes_per_MiB:15,.1f} MiB;\tmediasize : {mediasize/bytes_per_MiB:12,.1f} MiB")
     treetarget=f"{args.outdir}/{treename}.{str(cumsize//mediasize).zfill(digits)}"
-    print(f"adding to : {treetarget}")
+    tee(f"adding to : {treetarget}")
     printProgress( (cumsize%mediasize)/mediasize * 100, 80)
     if nodesize > mediasize:
-        print("THIS NODE IS TOOOO BIG FOR MEDIA - SKIPPING")
+        tee("THIS NODE IS TOOOO BIG FOR MEDIA - SKIPPING")
         continue
     if not os.path.exists(f'{treetarget}'):
         mkdircommand=f"mkdir -p {treetarget}"
         subprocess.run(mkdircommand,shell=True)
-        print(f"added tree : {treetarget}")
+        tee(f"added tree : {treetarget}")
 
     linkcommand=f"ln -s {nodename} {treetarget}"
-    print(linkcommand)
+    #tee(linkcommand)
     result=subprocess.run(linkcommand,shell=True)
     if result.returncode:
-        print("failure planting new tree or grafting the branch, link likely already exists")
-    print('\n')
+        tee("failure planting new tree or grafting the branch, link likely already exists")
+    tee('\n')
+logfile.close()
