@@ -115,7 +115,7 @@ for node in iter(result.stdout.decode("utf-8").splitlines()):
         tee("THIS NODE IS TOOOO BIG FOR MEDIA - SKIPPING")
         continue
     if not os.path.exists(f'{treetarget}'):
-        if ( (cumsize//mediasize) - 1 ) > 0:
+        if ( (cumsize//mediasize) - 1 ) >= 0:
             oldtree=f"{args.outdir}/{treename}.{str( (cumsize//mediasize) - 1 ).zfill(digits)}"
             treecmd=f"tree -ls {oldtree} > {oldtree}.tree"
             subprocess.run(treecmd,shell=True)
