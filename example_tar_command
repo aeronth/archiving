@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+: ${1?"Usage: $0 TREETRUNK.XXX"}
+
+sudo time tar chvf /dev/st0 transplant.log $1.tree $1 --checkpoint=10240 --checkpoint-action=ttyout='%{%Y-%m-%d %H:%M:%S}t (%d sec): #%u, %T\n'| tee $1.tree.log
