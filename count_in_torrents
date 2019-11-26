@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+for f in *.torrent; do echo \"$f\",$(transmission-show $f |grep 0/.*\)|wc -l),files; done

@@ -94,10 +94,10 @@ digits=len(digits)
 
 for node in iter(result.stdout.decode("utf-8").splitlines()):
     nodename = f'{os.path.abspath(node)}'
-    (du_size,du_name)=subprocess.check_output(f'du -sb {nodename}',shell=True).decode("utf-8").split('\t')
+    tee(f'node name : "{nodename}"')
+    (du_size,du_name)=subprocess.check_output(f'du -sb "{nodename}"',shell=True).decode("utf-8").split('\t')
     nodesize = int(du_size)
     cumsize += nodesize
-    tee(f"node name : {nodename}")
     try:
         md5sum = subprocess.check_output(f'md5sum {nodename}',shell=True).decode("utf-8").split()[0]
         sha256sum = subprocess.check_output(f'sha256sum {nodename}',shell=True).decode("utf-8").split()[0]
