@@ -99,8 +99,8 @@ for node in iter(result.stdout.decode("utf-8").splitlines()):
     nodesize = int(du_size)
     cumsize += nodesize
     try:
-        md5sum = subprocess.check_output(f'md5sum {nodename}',shell=True).decode("utf-8").split()[0]
-        sha256sum = subprocess.check_output(f'sha256sum {nodename}',shell=True).decode("utf-8").split()[0]
+        md5sum = subprocess.check_output(f'md5sum "{nodename}"',shell=True).decode("utf-8").split()[0]
+        sha256sum = subprocess.check_output(f'sha256sum "{nodename}"',shell=True).decode("utf-8").split()[0]
         tee(f"md5sum: {md5sum}")
         tee(f"sha256sum: {sha256sum}")
     except:
@@ -120,11 +120,11 @@ for node in iter(result.stdout.decode("utf-8").splitlines()):
             treecmd=f"tree -ls {oldtree} > {oldtree}.tree"
             subprocess.run(treecmd,shell=True)
         
-        mkdircommand=f"mkdir -p {treetarget}"
+        mkdircommand=f'mkdir -p "{treetarget}"'
         subprocess.run(mkdircommand,shell=True)
         tee(f"added tree : {treetarget}")
 
-    linkcommand=f"ln -s {nodename} {treetarget}"
+    linkcommand=f'ln -s "{nodename}" "{treetarget}"'
     #tee(linkcommand)
     result=subprocess.run(linkcommand,shell=True)
     if result.returncode:

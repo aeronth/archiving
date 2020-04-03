@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+NFS_PREFIX=10.6.6.6:/volume1
+
+for d in $(ls -d */); do sudo mount.nfs -o nolock -w "$NFS_PREFIX/$d" "$d"; done;
