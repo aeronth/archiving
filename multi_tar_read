@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+time gtar thvf /dev/sa0 --multi-volume --new-volume-script=./next_tape --checkpoint=10240 --checkpoint-action=ttyout='%{%Y-%m-%d %H:%M:%S}t (%d sec): #%u, %T\n'| tee output.tar.log

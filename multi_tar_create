@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+: ${1?"Usage: $0 [folder-name]"}
+
+time gtar chvf /dev/sa0 $1 --sort='name' --multi-volume --tape-length=8500000M --new-volume-script=next_tape --checkpoint=10240 --checkpoint-action=ttyout='%{%Y-%m-%d %H:%M:%S}t (%d sec): #%u, %T\n'| tee $1.tar.log

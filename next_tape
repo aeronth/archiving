@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-mtx -f /dev/sg1 next
-mtx -f /dev/sg1 status
+mtx -f /dev/pass1 next
+mtx -f /dev/pass1 status
