@@ -1,0 +1,45 @@
+    HPE       Ultrium 8-SCSI    KAH1
+Volume statistics log page (ssc-4), subpage=0
+  Page valid: 1
+  Thread count: 3
+  Total data sets written: 1442125
+  Total write retries: 142
+  Total unrecovered write errors: 0
+  Total suspended writes: 0
+  Total fatal suspended writes: 0
+  Total data sets read: 196
+  Total read retries: 0
+  Total unrecovered read errors: 0
+  Last mount unrecovered write errors: 0
+  Last mount unrecovered read errors: 0
+  Last mount megabytes written: 0
+  Last mount megabytes read: 0
+  Lifetime megabytes written: 7255330
+  Lifetime megabytes read: 986
+  Last load write compression ratio: 0
+  Last load read compression ratio: 0
+  Medium mount time: 25871 milliseconds
+  Medium ready time: 16134 milliseconds
+  Total native capacity: 9000000 megabytes
+  Total used native capacity: 581301 megabytes
+  Volume serial number: EYMW0R1HMY                      
+  Tape lot identifier: *2289039
+  Volume barcode: ABG108M8                        
+  Volume manufacturer: FUJIFILM
+  Volume license code: 0707
+  Volume personality: LTOM8G8  
+  Write protect: 0
+  WORM: 0
+  Maximum recommended tape path temperature exceeded: 0
+  Beginning of medium passes: 174
+  Middle of medium passes: 154
+  Logical position of first encrypted logical object:
+    partition number: 0, partition record data counter: 0xffffffffffff
+  Logical position of first unencrypted logical object after first encrypted logical object:
+    partition number: 0, partition record data counter: 0xffffffffffff
+  Native capacity partitions:
+    partition number: 0, partition record data counter [MB]: 9000000
+  Used native capacity partitions:
+    partition number: 0, partition record data counter [MB]: 581301
+  Remaining native capacity partitions:
+    partition number: 0, partition record data counter [MB]: 8382084
