@@ -101,11 +101,12 @@
                 </div>
                 <div class="space-y-4">
                     <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                        <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span> Active Session
+                        <span id="workspaceSyncDot" class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span> 
+                        <span id="workspaceSyncStatus" class="font-semibold">Loading App...</span>
                     </div>
                     <h3 class="text-lg font-bold text-white">Live Workspace Status</h3>
-                    <p class="text-sm text-slate-400 leading-relaxed">
-                        Currently preloaded with detailed SCSI telemetry. Press <strong class="text-white">Sync from GitHub</strong> to fetch and evaluate all remaining logs in real-time!
+                    <p id="workspaceStatusDesc" class="text-sm text-slate-400 leading-relaxed">
+                        Initializing dashboard workspace and contacting GitHub repository to fetch all LTO tape logs...
                     </p>
                 </div>
                 <div class="pt-4 border-t border-slate-800/80 flex justify-between items-center text-xs text-slate-400">
@@ -427,7 +428,7 @@
 
     <!-- JS Logic and Data Initialization -->
     <script>
-        // 10 Detailed Initial Pre-loaded tapes parsed comprehensively from the logs
+        // Fallback LTO tapes in case network fetch experiences rate limits or downtime.
         const preloadedTapes = [
             { 
                 barcode: "ABG100M8", 
@@ -696,6 +697,9 @@
             loadCustomTapes();
             setupEventListeners();
             updateDashboard();
+
+            // Automatically sync the complete inventory from GitHub on startup
+            fetchFromGitHub(true);
         });
 
         // Event listeners
@@ -748,7 +752,7 @@
                 updateDashboard();
             });
             document.getElementById('btnExport').addEventListener('click', exportToCSV);
-            document.getElementById('btnFetchGithub').addEventListener('click', fetchFromGitHub);
+            document.getElementById('btnFetchGithub').addEventListener('click', () => fetchFromGitHub(false));
         }
 
         // Health Evaluator Function
@@ -802,24 +806,42 @@
         }
 
         // GitHub API Fetching Logic
-        async function fetchFromGitHub() {
+        async function fetchFromGitHub(isAuto = false) {
             const btn = document.getElementById('btnFetchGithub');
             const statusTxt = document.getElementById('githubStatus');
+            const workspaceDesc = document.getElementById('workspaceStatusDesc');
+            const syncDot = document.getElementById('workspaceSyncDot');
+            const syncStatusText = document.getElementById('workspaceSyncStatus');
             const repoUrl = 'https://api.github.com/repos/aeronth/archiving/contents/';
             
             try {
-                btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Fetching...`;
-                btn.disabled = true;
+                // UI Loading state
+                if (!isAuto) {
+                    btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Fetching...`;
+                    btn.disabled = true;
+                }
+
+                syncDot.className = "w-2 h-2 rounded-full bg-amber-500 animate-ping";
+                syncStatusText.innerText = "Syncing Live Data...";
+                
                 statusTxt.innerText = "Querying repository contents...";
+                statusTxt.className = "text-xs text-blue-400 mt-2 min-h-[16px] animate-pulse";
+                
+                workspaceDesc.innerHTML = `<span class="flex items-center gap-2"><i data-lucide="loader-2" class="w-4 h-4 animate-spin text-blue-400"></i> Connecting to the public GitHub repository to index all LTO tape logs...</span>`;
                 lucide.createIcons();
 
+                // Get list of files in the repo root
                 const response = await fetch(repoUrl);
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const files = await response.json();
                 
+                // Filter for our target log files
                 const logFiles = files.filter(file => file.name.endsWith('.sg.logs'));
                 statusTxt.innerText = `Found ${logFiles.length} log files. Downloading...`;
+                workspaceDesc.innerHTML = `<span class="flex items-center gap-2"><i data-lucide="loader-2" class="w-4 h-4 animate-spin text-blue-400"></i> Downloading and analyzing ${logFiles.length} telemetry reports...</span>`;
+                lucide.createIcons();
 
+                // Fetch raw text for all files concurrently
                 const fetchPromises = logFiles.map(file => {
                     return fetch(file.download_url)
                         .then(res => res.text())
@@ -832,17 +854,20 @@
 
                 const results = await Promise.all(fetchPromises);
                 
+                // Process the downloaded records
                 const newTapes = results.filter(t => t !== null);
                 if (newTapes.length > 0) {
                     newTapes.forEach(newTape => {
                         const index = customTapes.findIndex(t => t.barcode === newTape.barcode);
                         if (index > -1) {
-                            customTapes[index] = newTape; 
+                            customTapes[index] = newTape; // Update existing
                         } else {
+                            // Check if duplicate of preloaded tape
                             const preloadedIndex = preloadedTapes.findIndex(t => t.barcode === newTape.barcode);
                             if (preloadedIndex === -1) {
                                 customTapes.push(newTape);
                             } else {
+                                // Override preloaded tape with uploaded details
                                 preloadedTapes[preloadedIndex] = newTape;
                             }
                         }
@@ -851,21 +876,32 @@
                     updateDashboard();
                 }
 
+                // Restore UI success state
                 statusTxt.innerText = `Successfully synced ${newTapes.length} tapes!`;
-                statusTxt.classList.add('text-emerald-400');
-                statusTxt.classList.remove('text-slate-500');
+                statusTxt.className = "text-xs text-emerald-400 mt-2 min-h-[16px]";
+                
+                syncDot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
+                syncStatusText.innerText = "Live Sync Active";
+                
+                workspaceDesc.innerHTML = `Successfully fetched and analyzed <strong class="text-white">${newTapes.length} tape logs</strong> directly from your GitHub repository! Visualizations and diagnostic dashboards are fully live.`;
+                lucide.createIcons();
                 
             } catch (err) {
                 console.error("GitHub Fetch Error:", err);
-                statusTxt.innerText = "Error fetching files. Is repo public?";
-                statusTxt.classList.add('text-rose-400');
-                statusTxt.classList.remove('text-slate-500');
+                statusTxt.innerText = "Error syncing repository. Rate limited?";
+                statusTxt.className = "text-xs text-rose-400 mt-2 min-h-[16px]";
+                
+                syncDot.className = "w-2 h-2 rounded-full bg-rose-500";
+                syncStatusText.innerText = "Offline Mode / Rate Limited";
+                
+                workspaceDesc.innerHTML = `Could not reach GitHub (likely due to API rate limits or lack of connection). Displaying <strong class="text-white">preloaded fallback telemetry</strong>. Click Sync to retry manual extraction.`;
+                lucide.createIcons();
             } finally {
+                // Reset button after delay
                 setTimeout(() => {
                     btn.innerHTML = `<i data-lucide="cloud-download" class="w-4 h-4"></i> Sync from GitHub`;
                     btn.disabled = false;
-                    statusTxt.classList.add('text-slate-500');
-                    statusTxt.classList.remove('text-emerald-400', 'text-rose-400');
+                    statusTxt.className = "text-xs text-slate-500 mt-2 min-h-[16px]";
                     statusTxt.innerText = "Pulls all .sg.logs from the repo";
                     lucide.createIcons();
                 }, 3000);
