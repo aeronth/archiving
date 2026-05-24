@@ -4,12 +4,40 @@
 CHANGER_DEV="/dev/sch0"
 DRIVE_DEV="/dev/st0"
 DRIVE_NUM=0
+#!/bin/bash
+
+# 1. Check if exactly/at least two arguments are provided
+if [ "$#" -lt 2 ]; then
+  echo "Error: Please provide at least two arguments." >&2
+  exit 1
+fi
+
+START="$1"
+END="$2"
+
+# 2. Verify that both arguments are integers using a regular expression
+# The regex ^-?[0-9]+$ matches an optional negative sign followed by numbers
+if ! [[ "$START" =~ ^-?[0-9]+$ ]]; then
+  echo "Error: First argument '$START' is not a valid integer." >&2
+  exit 1
+fi
+
+if ! [[ "$END" =~ ^-?[0-9]+$ ]]; then
+  echo "Error: Second argument '$END' is not a valid integer." >&2
+  exit 1
+fi
+
+# 3. Check if the first argument is strictly less than the second
+if [ "$START" -ge "$END" ]; then
+  echo "Error: The first argument ($START) must be smaller than the second ($END)." >&2
+  exit 1
+fi
 
 echo "Starting tape logging process..."
 echo "-----------------------------------"
 
-# Loop through source slots 1 to 22
-for slot in {1..22}; do
+# Loop through source slots $START to $END
+for slot in $(seq $START $END); do
     echo "Loading tape from slot $slot into drive $DRIVE_NUM..."
     
     # Load the tape
