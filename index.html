@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LTO Tape Library Analyzer & Health Monitor</title>
+    <title>The Young Lady's Illustrated Primer - LTO Archival Ledger</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
@@ -11,41 +11,87 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+        
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'EB Garamond', serif;
+            background-color: #120a07;
+            background-image: radial-gradient(#20120b 1px, transparent 1px);
+            background-size: 24px 24px;
         }
         .code-font {
             font-family: 'JetBrains Mono', monospace;
         }
-        /* Drawer transitions */
+        /* Illustrated Primer Card Style */
+        .primer-card {
+            background-color: #1a0f0a;
+            border: 3px double #8c6a4a;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.85), 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+        }
+        .primer-accent-border {
+            border-color: #8c6a4a;
+        }
+        /* Buttons with a polished brass / clockwork look */
+        .brass-button {
+            background: linear-gradient(180deg, #b88c56 0%, #7d5930 100%);
+            border: 1px solid #4a331a;
+            color: #120a07;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+        }
+        .brass-button:hover {
+            background: linear-gradient(180deg, #d4a36a 0%, #916839 100%);
+            transform: translateY(-1px);
+        }
+        .brass-button:active {
+            transform: translateY(1px);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+        }
+        /* Sliding drawer */
         .drawer-transition {
-            transition: transform 0.3s ease-in-out;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        /* Custom scrollbar for antique book aesthetic */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #120a07;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4a2f1a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #784b29;
         }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col overflow-x-hidden">
+<body class="text-[#f5ebd6] min-h-screen flex flex-col overflow-x-hidden">
 
     <!-- Header -->
-    <header class="border-b border-slate-800 bg-slate-950/50 backdrop-blur sticky top-0 z-40">
+    <header class="border-b-4 border-double border-[#8c6a4a] bg-[#170c07] sticky top-0 z-40 shadow-xl">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <div class="bg-blue-600 p-2 rounded-lg text-white shadow-lg shadow-blue-500/20">
-                    <i data-lucide="shield-alert" class="w-6 h-6"></i>
+            <div class="flex items-center gap-4">
+                <div class="bg-[#29170e] p-2.5 rounded-xl border-2 border-[#8c6a4a] text-[#b88c56] shadow-inner">
+                    <i data-lucide="book-open-check" class="w-7 h-7"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-                        LTO Tape Library Dashboard
+                    <h1 class="text-2xl font-bold tracking-wide text-[#b88c56] font-serif flex items-center gap-2">
+                        The Young Lady's Illustrated Primer
                     </h1>
-                    <p class="text-xs text-slate-400 font-medium">SCSI SSC-4 Subpage 0 Diagnostics & Wear Monitoring</p>
+                    <p class="text-xs text-[#c2ab95] italic font-serif">Aether-Net Archival Ledger & Mechanical Diagnostics</p>
                 </div>
             </div>
             <div class="flex gap-2 text-sm">
-                <button id="btnExport" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-3.5 py-2 rounded-lg font-medium border border-slate-700 transition">
-                    <i data-lucide="download" class="w-4 h-4"></i> Export CSV
+                <button id="btnExport" class="flex items-center gap-2 bg-[#2d1b11] hover:bg-[#3d271a] text-[#f5ebd6] px-4 py-2 rounded-lg font-medium border border-[#8c6a4a] transition duration-200">
+                    <i data-lucide="quill" class="w-4 h-4 text-[#b88c56]"></i> Scribe to Parchment Ledger
                 </button>
-                <button id="btnClear" class="flex items-center gap-2 bg-rose-950/40 hover:bg-rose-900/40 text-rose-300 px-3.5 py-2 rounded-lg font-medium border border-rose-800/50 transition">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i> Reset Data
+                <button id="btnClear" class="flex items-center gap-2 bg-[#2c0f0f] hover:bg-[#3d1919] text-[#ffcaca] px-4 py-2 rounded-lg font-medium border border-[#7a1f1f] transition duration-200">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Purge Diagnostics
                 </button>
             </div>
         </div>
@@ -57,180 +103,227 @@
         <!-- Import Control Zone -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Instructions and File Actions -->
-            <div class="lg:col-span-2 bg-slate-950/40 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+            <div class="lg:col-span-2 primer-card p-6 flex flex-col justify-between">
                 <div>
-                    <h2 class="text-lg font-semibold text-white mb-2 flex items-center gap-2">
-                        <i data-lucide="refresh-cw" class="text-blue-400 w-5 h-5"></i>
-                        Import Tape Logs
+                    <h2 class="text-xl font-semibold text-[#b88c56] mb-2 flex items-center gap-2 font-serif italic">
+                        <i data-lucide="compass" class="text-[#b88c56] w-5 h-5"></i>
+                        Aether-Net Ingestion Tray
                     </h2>
-                    <p class="text-sm text-slate-400 mb-6 leading-relaxed">
-                        Fetch telemetry data directly from your public <span class="code-font bg-slate-800 text-slate-300 px-1 py-0.5 rounded">aeronth/archiving</span> GitHub repository using your browser, or drop local logs manually. 
+                    <p class="text-sm text-[#c2ab95] mb-6 leading-relaxed">
+                        Siphon live telemetry registries from your remote archive directory <span class="code-font bg-[#2d1b11] text-[#ebdcae] px-1.5 py-0.5 rounded border border-[#4a2e1c]">aeronth/archiving</span>. The Illustrated Primer will dynamically decipher raw SCSI telemetry codes and plot physical parameters.
                     </p>
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <!-- GitHub Fetch Button -->
-                    <div class="border border-slate-800 bg-slate-900/50 rounded-xl p-6 flex flex-col items-center justify-center gap-3 text-center transition hover:border-blue-500/30">
-                        <i data-lucide="github" class="w-8 h-8 text-slate-400"></i>
+                    <div class="border border-[#4d3629] bg-[#140b07] rounded-xl p-6 flex flex-col items-center justify-center gap-3 text-center transition hover:border-[#8c6a4a]">
+                        <i data-lucide="globe-2" class="w-8 h-8 text-[#b88c56]/70"></i>
                         <div>
-                            <button id="btnFetchGithub" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-lg font-semibold shadow-lg shadow-blue-500/20 transition flex items-center gap-2 mx-auto">
-                                <i data-lucide="cloud-download" class="w-4 h-4"></i> Sync from GitHub
+                            <button id="btnFetchGithub" class="brass-button px-5 py-2.5 rounded-lg text-sm transition">
+                                <i data-lucide="sparkles" class="w-4 h-4 inline mr-1"></i> Siphon from Aether-Net
                             </button>
-                            <p id="githubStatus" class="text-xs text-slate-500 mt-2 min-h-[16px]">Pulls all .sg.logs from the repo</p>
+                            <p id="githubStatus" class="text-xs text-[#c2ab95] mt-2 italic min-h-[16px]">Pulls all .sg.logs from the repo</p>
                         </div>
                     </div>
 
                     <!-- Dropzone Area -->
-                    <div id="dropzone" class="border-2 border-dashed border-slate-800 hover:border-blue-500/80 bg-slate-900/50 hover:bg-slate-900/80 rounded-xl p-6 text-center cursor-pointer transition flex flex-col items-center justify-center gap-3">
+                    <div id="dropzone" class="border-2 border-dashed border-[#4d3629] hover:border-[#8c6a4a] bg-[#140b07] rounded-xl p-6 text-center cursor-pointer transition flex flex-col items-center justify-center gap-3">
                         <input type="file" id="fileInput" multiple accept=".logs,.log,.txt,.sg.logs" class="hidden">
-                        <div class="p-2 bg-slate-800/50 rounded-full text-slate-400">
-                            <i data-lucide="folder-open" class="w-6 h-6"></i>
+                        <div class="p-2 bg-[#2d1b11] rounded-full text-[#b88c56]">
+                            <i data-lucide="feather" class="w-6 h-6"></i>
                         </div>
                         <div>
-                            <p class="text-sm font-medium text-slate-200">Drag & drop files here</p>
-                            <p class="text-xs text-slate-500 mt-1">Manual local fallback</p>
+                            <p class="text-sm font-medium text-[#f5ebd6]">Drop raw telemetry slips</p>
+                            <p class="text-xs text-[#c2ab95] italic mt-1">Manual Ingestion</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Preloaded Info Stats -->
-            <div class="bg-gradient-to-br from-blue-950/30 to-slate-950/40 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-8 opacity-5 text-blue-400 pointer-events-none">
-                    <i data-lucide="hard-drive" class="w-32 h-32"></i>
+            <div class="primer-card p-6 flex flex-col justify-between relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-8 opacity-5 text-[#b88c56] pointer-events-none">
+                    <i data-lucide="cog" class="w-32 h-32 animate-spin" style="animation-duration: 20s;"></i>
                 </div>
                 <div class="space-y-4">
-                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                        <span id="workspaceSyncDot" class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span> 
-                        <span id="workspaceSyncStatus" class="font-semibold">Loading App...</span>
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#2a1a11] text-[#b88c56] border border-[#5c3e24]">
+                        <span id="workspaceSyncDot" class="w-2 h-2 rounded-full bg-[#b88c56] animate-pulse"></span> 
+                        <span id="workspaceSyncStatus" class="font-serif italic text-xs">Aetheric Standby</span>
                     </div>
-                    <h3 class="text-lg font-bold text-white">Live Workspace Status</h3>
-                    <p id="workspaceStatusDesc" class="text-sm text-slate-400 leading-relaxed">
-                        Initializing dashboard workspace and contacting GitHub repository to fetch all LTO tape logs...
+                    <h3 class="text-lg font-serif font-bold text-[#b88c56]">Ledger Context Engine</h3>
+                    <p id="workspaceStatusDesc" class="text-sm text-[#c2ab95] leading-relaxed italic">
+                        The Primer is currently initialized with a select registry of 10 classic volumes. Trigger an Aetheric Connection to load the full 22-tape physical inventory...
                     </p>
                 </div>
-                <div class="pt-4 border-t border-slate-800/80 flex justify-between items-center text-xs text-slate-400">
-                    <span class="flex items-center gap-1"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i> Local Telemetry Analyzer</span>
-                    <span>Direct API Access</span>
+                <div class="pt-4 border-t border-[#4d3629] flex justify-between items-center text-xs text-[#c2ab95]">
+                    <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5 text-[#b88c56]"></i> Real-Time Analysis</span>
+                    <span>No data exits sandbox</span>
                 </div>
             </div>
         </div>
 
         <!-- Metrics Cards Grid -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-slate-950/40 border border-slate-800 rounded-xl p-5 space-y-2 cursor-pointer hover:border-slate-700 transition" onclick="setHealthFilter('all')">
-                <div class="flex justify-between items-center text-slate-500">
-                    <span class="text-xs font-semibold uppercase tracking-wider">Total Tapes</span>
-                    <i data-lucide="layers" class="w-4 h-4"></i>
+            <!-- Total Archive Volumes -->
+            <div class="primer-card p-5 space-y-2 cursor-pointer hover:border-[#b88c56]/80 transition duration-300" onclick="setHealthFilter('all')">
+                <div class="flex justify-between items-center text-[#c2ab95]">
+                    <span class="text-xs font-semibold uppercase tracking-wider font-serif">Volumes Registered</span>
+                    <i data-lucide="book-marked" class="w-4 h-4 text-[#8c6a4a]"></i>
                 </div>
                 <div class="flex items-baseline gap-2">
-                    <span id="metricTotalTapes" class="text-3xl font-bold text-white">0</span>
-                    <span class="text-xs text-slate-400">volumes</span>
+                    <span id="metricTotalTapes" class="text-3xl font-bold font-serif text-[#ebdcae]">0</span>
+                    <span class="text-xs text-[#c2ab95] italic">cylinders</span>
                 </div>
             </div>
             
-            <div class="bg-emerald-950/20 border border-emerald-900/50 rounded-xl p-5 space-y-2 cursor-pointer hover:border-emerald-700 transition" onclick="setHealthFilter('healthy')">
-                <div class="flex justify-between items-center text-emerald-500">
-                    <span class="text-xs font-semibold uppercase tracking-wider">Healthy</span>
-                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+            <!-- Flawless Matrices -->
+            <div class="primer-card p-5 space-y-2 cursor-pointer hover:border-[#4f8c61] transition duration-300" onclick="setHealthFilter('healthy')">
+                <div class="flex justify-between items-center text-[#4f8c61]">
+                    <span class="text-xs font-semibold uppercase tracking-wider font-serif">Flawless Matrices</span>
+                    <i data-lucide="compass" class="w-4 h-4 text-[#4f8c61]"></i>
                 </div>
                 <div class="flex items-baseline gap-2">
-                    <span id="metricHealthyTapes" class="text-3xl font-bold text-emerald-400">0</span>
-                    <span class="text-xs text-emerald-500/70">volumes</span>
+                    <span id="metricHealthyTapes" class="text-3xl font-bold font-serif text-[#6ec28a]">0</span>
+                    <span class="text-xs text-[#4f8c61]/80 italic">nominal</span>
                 </div>
             </div>
 
-            <div class="bg-amber-950/20 border border-amber-900/50 rounded-xl p-5 space-y-2 cursor-pointer hover:border-amber-700 transition" onclick="setHealthFilter('warning')">
-                <div class="flex justify-between items-center text-amber-500">
-                    <span class="text-xs font-semibold uppercase tracking-wider">Warnings (Wear/Retry)</span>
-                    <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+            <!-- Warnings -->
+            <div class="primer-card p-5 space-y-2 cursor-pointer hover:border-[#b8803b] transition duration-300" onclick="setHealthFilter('warning')">
+                <div class="flex justify-between items-center text-[#b8803b]">
+                    <span class="text-xs font-semibold uppercase tracking-wider font-serif">Anomalies Noted</span>
+                    <i data-lucide="gauge" class="w-4 h-4 text-[#b8803b]"></i>
                 </div>
                 <div class="flex items-baseline gap-2">
-                    <span id="metricWarningTapes" class="text-3xl font-bold text-amber-400">0</span>
-                    <span class="text-xs text-amber-500/70">volumes</span>
+                    <span id="metricWarningTapes" class="text-3xl font-bold font-serif text-[#d49a55]">0</span>
+                    <span class="text-xs text-[#b8803b]/80 italic">wear warnings</span>
                 </div>
             </div>
 
-            <div class="bg-rose-950/20 border border-rose-900/50 rounded-xl p-5 space-y-2 cursor-pointer hover:border-rose-700 transition" onclick="setHealthFilter('critical')">
-                <div class="flex justify-between items-center text-rose-500">
-                    <span class="text-xs font-semibold uppercase tracking-wider">Critical Faults</span>
-                    <i data-lucide="x-circle" class="w-4 h-4"></i>
+            <!-- Critical Faults -->
+            <div class="primer-card p-5 space-y-2 cursor-pointer hover:border-[#b8464b] transition duration-300" onclick="setHealthFilter('critical')">
+                <div class="flex justify-between items-center text-[#b8464b]">
+                    <span class="text-xs font-semibold uppercase tracking-wider font-serif">Fractured Media</span>
+                    <i data-lucide="flame" class="w-4 h-4 text-[#b8464b]"></i>
                 </div>
                 <div class="flex items-baseline gap-2">
-                    <span id="metricCriticalTapes" class="text-3xl font-bold text-rose-400">0</span>
-                    <span class="text-xs text-rose-500/70">failures</span>
+                    <span id="metricCriticalTapes" class="text-3xl font-bold font-serif text-[#e0656a]">0</span>
+                    <span class="text-xs text-[#b8464b]/80 italic font-serif">errors</span>
                 </div>
             </div>
         </div>
 
         <!-- Global Capacity Stat Cards -->
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div class="bg-slate-950/40 border border-slate-800 rounded-xl p-5 flex items-center justify-between">
-                <div>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Archive Space</span>
-                    <p class="text-2xl font-bold text-white mt-1"><span id="statTotalUsed">0.0</span> <span class="text-sm font-medium text-slate-400">TB used</span></p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Total Archive Space (SPLIT ON TWO LINES) -->
+            <div class="primer-card p-5 flex items-center justify-between">
+                <div class="min-w-0 flex-grow">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-[#c2ab95] block font-serif">Aetheric Cylinder Core</span>
+                    <div class="mt-3 space-y-2">
+                        <!-- Line 1: Consumed Space -->
+                        <div class="flex items-baseline gap-2">
+                            <span id="statTotalUsed" class="text-3xl text-[#ebdcae] font-bold font-serif">0.0</span>
+                            <span class="text-xs text-[#c2ab95] font-serif uppercase tracking-wider italic">TB Consumed</span>
+                        </div>
+                        <!-- Decorative dotted line -->
+                        <div class="border-t border-dashed border-[#8c6a4a]/40 my-1"></div>
+                        <!-- Line 2: Available Space -->
+                        <div class="flex items-baseline gap-2">
+                            <span id="statTotalCapacity" class="text-xl text-[#b88c56] font-bold font-serif">0.0</span>
+                            <span class="text-xs text-[#c2ab95]/80 font-serif uppercase tracking-wider italic">TB Available</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800"><i data-lucide="hard-drive" class="text-blue-500 w-5 h-5"></i></div>
-            </div>
-            <div class="bg-slate-950/40 border border-slate-800 rounded-xl p-5 flex items-center justify-between">
-                <div>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Overall Utilization</span>
-                    <p class="text-2xl font-bold text-indigo-400 mt-1"><span id="statAvgUtil">0.0%</span> <span class="text-sm font-medium text-slate-400">of pool</span></p>
-                </div>
-                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800"><i data-lucide="percent" class="text-indigo-500 w-5 h-5"></i></div>
-            </div>
-            <div class="bg-slate-950/40 border border-slate-800 rounded-xl p-5 col-span-2 md:col-span-1 flex items-center justify-between">
-                <div>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Maximum Media Wear</span>
-                    <p class="text-2xl font-bold text-amber-500 mt-1"><span id="statMaxPasses">0</span> <span class="text-xs font-medium text-slate-400">passes (Medium)</span></p>
-                </div>
-                <div class="bg-slate-900 p-3 rounded-lg border border-slate-800"><i data-lucide="refresh-cw" class="text-amber-500 w-5 h-5"></i></div>
-            </div>
-        </div>
-
-        <!-- Chart Section -->
-        <div class="bg-slate-950/40 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                <div>
-                    <h3 class="text-lg font-semibold text-white">Used Capacity of Tapes</h3>
-                    <p class="text-xs text-slate-400">Sorted dynamically by used capacity (Terabytes)</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <label for="chartSort" class="text-xs font-medium text-slate-400 uppercase tracking-wider">Sort Order:</label>
-                    <select id="chartSort" class="bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
-                        <option value="desc">Descending (High to Low)</option>
-                        <option value="asc">Ascending (Low to High)</option>
-                        <option value="alphabetic">Alphanumeric Barcode</option>
-                    </select>
+                <div class="bg-[#140b07] p-3 rounded-lg border border-[#8c6a4a]/50 flex-shrink-0 ml-3 shadow-inner">
+                    <i data-lucide="cylinder" class="text-[#b88c56] w-6 h-6"></i>
                 </div>
             </div>
             
-            <div class="relative w-full h-[350px] sm:h-[450px]">
-                <canvas id="capacityChart"></canvas>
+            <!-- Overall Utilization -->
+            <div class="primer-card p-5 flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-[#c2ab95] block font-serif">Bulk Core Saturation</span>
+                    <p class="text-3xl font-bold font-serif text-[#ebdcae] mt-2"><span id="statAvgUtil">0.0%</span></p>
+                    <p class="text-xs text-[#c2ab95] italic mt-1 font-serif">of total physical medium capacity</p>
+                </div>
+                <div class="bg-[#140b07] p-3 rounded-lg border border-[#8c6a4a]/50 flex-shrink-0 shadow-inner">
+                    <i data-lucide="activity-square" class="text-[#b88c56] w-6 h-6"></i>
+                </div>
+            </div>
+            
+            <!-- Maximum Media Wear -->
+            <div class="primer-card p-5 flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-[#c2ab95] block font-serif">Heaviest Mechanical Load</span>
+                    <p class="text-3xl font-bold font-serif text-[#d49a55] mt-2"><span id="statMaxPasses">0</span></p>
+                    <p class="text-xs text-[#c2ab95] italic mt-1 font-serif">passes (Beg. Spindle Domain)</p>
+                </div>
+                <div class="bg-[#140b07] p-3 rounded-lg border border-[#8c6a4a]/50 flex-shrink-0 shadow-inner">
+                    <i data-lucide="history" class="text-[#b88c56] w-6 h-6"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Grid Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Capacity Chart Section -->
+            <div class="primer-card p-6 space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                    <div>
+                        <h3 class="text-lg font-semibold text-[#b88c56] font-serif italic">Core Media Densities</h3>
+                        <p class="text-xs text-[#c2ab95] italic">Dynamic visualization of cylinder storage parameters (Terabytes)</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label for="chartSort" class="text-xs font-medium text-[#c2ab95] uppercase tracking-wider">Sort Order:</label>
+                        <select id="chartSort" class="bg-[#29170e] border border-[#8c6a4a] rounded-lg px-3 py-1.5 text-xs text-[#ebdcae] focus:outline-none focus:border-[#b88c56]">
+                            <option value="desc">Descending (High to Low)</option>
+                            <option value="asc">Ascending (Low to High)</option>
+                            <option value="alphabetic">Alphanumeric Barcode</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="relative w-full h-[320px] sm:h-[350px]">
+                    <canvas id="capacityChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Media Wear Chart Section -->
+            <div class="primer-card p-6 space-y-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-[#b88c56] font-serif italic">Centrifugal Ribbon Wear Chart</h3>
+                        <p class="text-xs text-[#c2ab95] italic">Measures physical friction across beginning and middle reel domains</p>
+                    </div>
+                </div>
+                
+                <div class="relative w-full h-[320px] sm:h-[350px]">
+                    <canvas id="wearChart"></canvas>
+                </div>
             </div>
         </div>
 
         <!-- Table Section -->
-        <div class="bg-slate-950/40 border border-slate-800 rounded-2xl overflow-hidden space-y-4 py-6">
+        <div class="primer-card overflow-hidden space-y-4 py-6">
             <div class="px-6 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                 <div>
-                    <h3 class="text-lg font-semibold text-white">Detailed Volume Report</h3>
-                    <p class="text-xs text-slate-400">Select any row to view full subpage 0 diagnostic logs and hardware metrics</p>
+                    <h3 class="text-xl font-semibold text-[#b88c56] font-serif italic">The Illustrated Register of Volumes</h3>
+                    <p class="text-xs text-[#c2ab95] italic">Commit queries to evaluate particular cylinder matrices or physical thread limits</p>
                 </div>
-                <div class="flex flex-wrap gap-2">
-                    <input id="tableSearch" type="text" placeholder="Search barcode..." class="bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 min-w-[150px]">
+                <div class="flex flex-wrap gap-2 text-xs">
+                    <input id="tableSearch" type="text" placeholder="Engrave query barcode..." class="bg-[#140b07] border border-[#8c6a4a] rounded-lg px-3 py-1.5 text-[#ebdcae] placeholder-[#8c6a4a]/60 focus:outline-none focus:border-[#b88c56] min-w-[150px]">
                     
-                    <select id="filterStatus" class="bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
-                        <option value="all">All Health States</option>
-                        <option value="healthy">Healthy Only</option>
-                        <option value="warning">Warning Only</option>
-                        <option value="critical">Critical Only</option>
+                    <select id="filterStatus" class="bg-[#140b07] border border-[#8c6a4a] rounded-lg px-3 py-1.5 text-[#ebdcae] focus:outline-none focus:border-[#b88c56]">
+                        <option value="all">All Health Matrices</option>
+                        <option value="healthy">Flawless Matrices</option>
+                        <option value="warning">Noted Anomalies</option>
+                        <option value="critical">Fractured Matrices</option>
                     </select>
 
-                    <select id="filterPersonality" class="bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
-                        <option value="all">All Personalities</option>
-                        <option value="LTOM8G8">LTOM8G8 Only</option>
-                        <option value="LTOL8G8">LTOL8G8 Only</option>
+                    <select id="filterPersonality" class="bg-[#140b07] border border-[#8c6a4a] rounded-lg px-3 py-1.5 text-[#ebdcae] focus:outline-none focus:border-[#b88c56]">
+                        <option value="all">All Formats</option>
+                        <option value="LTOM8G8">LTOM8G8 Format Only</option>
+                        <option value="LTOL8G8">LTOL8G8 Format Only</option>
                     </select>
                 </div>
             </div>
@@ -239,122 +332,122 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse text-sm">
                     <thead>
-                        <tr class="border-b border-slate-800 bg-slate-950/80 text-slate-400 font-medium select-none">
-                            <th class="py-3 px-6 cursor-pointer hover:text-white transition" onclick="setSort('barcode')">
-                                <span class="flex items-center gap-1">Barcode <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5"></i></span>
+                        <tr class="border-b-2 border-[#8c6a4a] bg-[#1c0f0a] text-[#ebdcae] font-serif italic select-none">
+                            <th class="py-3.5 px-6 cursor-pointer hover:text-[#b88c56] transition" onclick="setSort('barcode')">
+                                <span class="flex items-center gap-1">Barcode <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5 text-[#8c6a4a]"></i></span>
                             </th>
-                            <th class="py-3 px-6 cursor-pointer hover:text-white transition" onclick="setSort('health')">
-                                <span class="flex items-center gap-1">Health State <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5"></i></span>
+                            <th class="py-3.5 px-6 cursor-pointer hover:text-[#b88c56] transition" onclick="setSort('health')">
+                                <span class="flex items-center gap-1">Integrity <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5 text-[#8c6a4a]"></i></span>
                             </th>
-                            <th class="py-3 px-6 cursor-pointer hover:text-white transition" onclick="setSort('personality')">
-                                <span class="flex items-center gap-1">Personality <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5"></i></span>
+                            <th class="py-3.5 px-6 cursor-pointer hover:text-[#b88c56] transition" onclick="setSort('personality')">
+                                <span class="flex items-center gap-1">Identity <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5 text-[#8c6a4a]"></i></span>
                             </th>
-                            <th class="py-3 px-6 text-right cursor-pointer hover:text-white transition" onclick="setSort('written')">
-                                <span class="flex items-center justify-end gap-1">Written <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5"></i></span>
+                            <th class="py-3.5 px-6 text-right cursor-pointer hover:text-[#b88c56] transition" onclick="setSort('written')">
+                                <span class="flex items-center justify-end gap-1">Written <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5 text-[#8c6a4a]"></i></span>
                             </th>
-                            <th class="py-3 px-6 text-right cursor-pointer hover:text-white transition" onclick="setSort('used')">
-                                <span class="flex items-center justify-end gap-1">Used Space <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5"></i></span>
+                            <th class="py-3.5 px-6 text-right cursor-pointer hover:text-[#b88c56] transition" onclick="setSort('used')">
+                                <span class="flex items-center justify-end gap-1">Consumed <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5 text-[#8c6a4a]"></i></span>
                             </th>
-                            <th class="py-3 px-6 text-right cursor-pointer hover:text-white transition" onclick="setSort('passes')">
-                                <span class="flex items-center justify-end gap-1">Media Wear (Beg. Passes) <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5"></i></span>
+                            <th class="py-3.5 px-6 text-right cursor-pointer hover:text-[#b88c56] transition" onclick="setSort('passes')">
+                                <span class="flex items-center justify-end gap-1">Ribbon passes <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5 text-[#8c6a4a]"></i></span>
                             </th>
-                            <th class="py-3 px-6 text-center">Diagnostics Status</th>
+                            <th class="py-3.5 px-6 text-center">Inspect</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody" class="divide-y divide-slate-800/50 bg-slate-950/20">
+                    <tbody id="tableBody" class="divide-y divide-[#4a2e1c]/40 bg-[#120a07]/50 font-serif">
                         <!-- Filled dynamically -->
                     </tbody>
                 </table>
             </div>
             
             <!-- Empty State -->
-            <div id="emptyState" class="hidden flex flex-col items-center justify-center py-12 text-slate-500 gap-2">
-                <i data-lucide="inbox" class="w-12 h-12"></i>
-                <p class="text-sm font-medium">No records found matching current criteria</p>
+            <div id="emptyState" class="hidden flex flex-col items-center justify-center py-12 text-[#c2ab95] gap-2">
+                <i data-lucide="alert-circle" class="w-12 h-12 text-[#8c6a4a]"></i>
+                <p class="text-sm font-medium italic">No ledger sheets found matching that query</p>
             </div>
         </div>
     </main>
 
     <!-- Slide-over Diagnostic Drawer -->
-    <div id="drawerOverlay" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden transition-opacity duration-300 opacity-0" onclick="closeDrawer()"></div>
-    <div id="diagnosticDrawer" class="fixed inset-y-0 right-0 max-w-lg w-full bg-slate-950 border-l border-slate-800 z-50 shadow-2xl transform translate-x-full drawer-transition flex flex-col overflow-y-auto">
+    <div id="drawerOverlay" class="fixed inset-0 bg-[#0c0604]/80 backdrop-blur-sm z-50 hidden transition-opacity duration-300 opacity-0" onclick="closeDrawer()"></div>
+    <div id="diagnosticDrawer" class="fixed inset-y-0 right-0 max-w-lg w-full bg-[#170e0a] border-l-4 border-double border-[#8c6a4a] z-50 shadow-2xl transform translate-x-full drawer-transition flex flex-col overflow-y-auto">
         <!-- Drawer Header -->
-        <div class="p-6 border-b border-slate-800 bg-slate-950/80 sticky top-0 z-10 flex justify-between items-center">
+        <div class="p-6 border-b border-[#8c6a4a] bg-[#1a100b] sticky top-0 z-10 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div id="drawerBadgeContainer" class="p-2 rounded-lg text-white">
-                    <i id="drawerHeaderIcon" data-lucide="activity" class="w-5 h-5"></i>
+                <div id="drawerBadgeContainer" class="p-2.5 rounded-lg border border-[#8c6a4a]">
+                    <i id="drawerHeaderIcon" data-lucide="compass" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <h2 class="text-lg font-bold text-white flex items-center gap-2" id="drawerBarcode">ABG100M8</h2>
-                    <p class="text-xs text-slate-400" id="drawerSerial">Serial: EYKK0T111W</p>
+                    <h2 class="text-xl font-bold font-serif text-[#b88c56] flex items-center gap-2" id="drawerBarcode">ABG100M8</h2>
+                    <p class="text-xs text-[#c2ab95] font-serif italic" id="drawerSerial">Serial: EYKK0T111W</p>
                 </div>
             </div>
-            <button onclick="closeDrawer()" class="text-slate-400 hover:text-white p-1 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 transition">
+            <button onclick="closeDrawer()" class="text-[#ebdcae] hover:text-white p-1 rounded-lg bg-[#2c1a11] border border-[#8c6a4a] hover:border-[#b88c56] transition">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
         </div>
 
         <!-- Drawer Body -->
-        <div class="p-6 space-y-6 flex-grow">
+        <div class="p-6 space-y-6 flex-grow font-serif">
             <!-- Health Rating Info -->
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+            <div class="bg-[#120a07] border border-[#4d3629] rounded-xl p-4 space-y-3">
                 <div class="flex justify-between items-center">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Analysis & Status Rating</span>
-                    <span id="drawerHealthState" class="px-2.5 py-0.5 rounded-full text-xs font-semibold">Healthy</span>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-[#c2ab95]">Archival Integrity Verdict</span>
+                    <span id="drawerHealthState" class="px-2.5 py-0.5 rounded-full text-xs font-semibold font-serif">Nominal</span>
                 </div>
-                <p id="drawerHealthAdvice" class="text-xs text-slate-300 leading-relaxed">No error conditions detected on this LTO tape medium. Performance thresholds operate within nominal ranges.</p>
+                <p id="drawerHealthAdvice" class="text-xs text-[#ebdcae] leading-relaxed italic">No unrecovered structural failures logged. The spindle matrix remains within pristine mechanical thresholds.</p>
             </div>
 
             <!-- Wear Diagnostic Card -->
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-4">
-                <h4 class="text-sm font-semibold text-white flex items-center gap-2 border-b border-slate-800 pb-2">
-                    <i data-lucide="refresh-cw" class="w-4 h-4 text-amber-500"></i> Physical Media Wear (Mechanical passes)
+            <div class="bg-[#120a07] border border-[#4d3629] rounded-xl p-4 space-y-4">
+                <h4 class="text-sm font-semibold text-[#b88c56] flex items-center gap-2 border-b border-[#4d3629] pb-2 uppercase tracking-wide">
+                    <i data-lucide="history" class="w-4 h-4 text-[#ebdcae]"></i> Friction Cycles of the Medium
                 </h4>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-1">
-                        <span class="text-xs text-slate-400">Beginning of Medium passes</span>
+                        <span class="text-xs text-[#c2ab95] italic">Beginning passes</span>
                         <p class="text-xl font-bold text-white code-font" id="drawerBegPasses">0</p>
-                        <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                            <div id="drawerBegPassesProgress" class="bg-blue-500 h-full rounded-full" style="width: 0%"></div>
+                        <div class="w-full bg-[#29170e] rounded-full h-2 border border-[#8c6a4a]/40 overflow-hidden">
+                            <div id="drawerBegPassesProgress" class="bg-gradient-to-r from-[#b88c56] to-[#d49a55] h-full rounded-full" style="width: 0%"></div>
                         </div>
                     </div>
                     <div class="space-y-1">
-                        <span class="text-xs text-slate-400">Middle of Medium passes</span>
+                        <span class="text-xs text-[#c2ab95] italic">Middle wear passes</span>
                         <p class="text-xl font-bold text-white code-font" id="drawerMidPasses">0</p>
-                        <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                            <div id="drawerMidPassesProgress" class="bg-indigo-500 h-full rounded-full" style="width: 0%"></div>
+                        <div class="w-full bg-[#29170e] rounded-full h-2 border border-[#8c6a4a]/40 overflow-hidden">
+                            <div id="drawerMidPassesProgress" class="bg-gradient-to-r from-[#8c6a4a] to-[#ebdcae] h-full rounded-full" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
-                <p class="text-[11px] text-slate-500 leading-normal">
-                    LTO tape drives execute load/unload passes. High physical passes represent tape physical track wear. Tapes over 10,000 passes should be migrated proactively.
+                <p class="text-[11px] text-[#c2ab95]/80 leading-normal italic">
+                    Physical passes represent the tape ribbon sliding across the mechanical reading head. High passage densities indicate structural wear and require periodic spool tensioning.
                 </p>
             </div>
 
             <!-- SCSI SSC-4 Subpage 0 Stats (Read / Write Diagnostics) -->
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-4">
-                <h4 class="text-sm font-semibold text-white flex items-center gap-2 border-b border-slate-800 pb-2">
-                    <i data-lucide="shield-alert" class="w-4 h-4 text-blue-500"></i> SCSI Error Counters & Retries
+            <div class="bg-[#120a07] border border-[#4d3629] rounded-xl p-4 space-y-4">
+                <h4 class="text-sm font-semibold text-[#b88c56] flex items-center gap-2 border-b border-[#4d3629] pb-2 uppercase tracking-wide">
+                    <i data-lucide="shield-alert" class="w-4 h-4 text-[#b8464b]"></i> Clockwork Block Retries & Faults
                 </h4>
 
                 <div class="space-y-4">
                     <!-- Write Blocks Diagnostic -->
                     <div class="space-y-2">
-                        <div class="flex justify-between text-xs text-slate-400">
-                            <span>Write Retries / Suspended writes</span>
-                            <span class="text-white code-font" id="drawerWriteRetriesLabel">0 retries / 0 suspended</span>
+                        <div class="flex justify-between text-xs text-[#c2ab95]">
+                            <span>Write Retries / Suspended spooling</span>
+                            <span class="text-[#ebdcae] code-font text-xs" id="drawerWriteRetriesLabel">0 retries / 0 suspended</span>
                         </div>
-                        <div class="grid grid-cols-3 gap-2 text-center">
-                            <div class="bg-slate-950 p-2 rounded-lg border border-slate-800/80">
-                                <span class="block text-[10px] uppercase text-slate-500 tracking-wider">Write Retries</span>
-                                <span class="text-sm font-semibold text-white code-font" id="drawerWriteRetries">0</span>
+                        <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                            <div class="bg-[#1c100a] p-2 rounded-lg border border-[#8c6a4a]/30">
+                                <span class="block text-[9px] uppercase text-[#c2ab95] tracking-wider">Retries</span>
+                                <span class="text-sm font-semibold text-[#ebdcae] code-font" id="drawerWriteRetries">0</span>
                             </div>
-                            <div class="bg-slate-950 p-2 rounded-lg border border-slate-800/80">
-                                <span class="block text-[10px] uppercase text-slate-500 tracking-wider">Suspended Writes</span>
-                                <span class="text-sm font-semibold text-white code-font" id="drawerSuspendedWrites">0</span>
+                            <div class="bg-[#1c100a] p-2 rounded-lg border border-[#8c6a4a]/30">
+                                <span class="block text-[9px] uppercase text-[#c2ab95] tracking-wider">Suspended</span>
+                                <span class="text-sm font-semibold text-[#ebdcae] code-font" id="drawerSuspendedWrites">0</span>
                             </div>
-                            <div class="bg-slate-950 p-2 rounded-lg border border-slate-800/80">
-                                <span class="block text-[10px] uppercase text-slate-500 tracking-wider">Unrecovered Write</span>
+                            <div class="bg-[#1c100a] p-2 rounded-lg border border-[#8c6a4a]/30">
+                                <span class="block text-[9px] uppercase text-[#c2ab95] tracking-wider font-semibold">Unrecovered</span>
                                 <span class="text-sm font-semibold code-font" id="drawerUnrecoveredWrites">0</span>
                             </div>
                         </div>
@@ -362,17 +455,17 @@
 
                     <!-- Read Blocks Diagnostic -->
                     <div class="space-y-2">
-                        <div class="flex justify-between text-xs text-slate-400">
+                        <div class="flex justify-between text-xs text-[#c2ab95]">
                             <span>Read Retries / Unrecovered errors</span>
-                            <span class="text-white code-font" id="drawerReadRetriesLabel">0 retries / 0 unrecovered</span>
+                            <span class="text-[#ebdcae] code-font text-xs" id="drawerReadRetriesLabel">0 retries / 0 unrecovered</span>
                         </div>
-                        <div class="grid grid-cols-2 gap-2 text-center">
-                            <div class="bg-slate-950 p-2 rounded-lg border border-slate-800/80">
-                                <span class="block text-[10px] uppercase text-slate-500 tracking-wider">Read Retries</span>
-                                <span class="text-sm font-semibold text-white code-font" id="drawerReadRetries">0</span>
+                        <div class="grid grid-cols-2 gap-2 text-center text-xs">
+                            <div class="bg-[#1c100a] p-2 rounded-lg border border-[#8c6a4a]/30">
+                                <span class="block text-[9px] uppercase text-[#c2ab95] tracking-wider">Read Retries</span>
+                                <span class="text-sm font-semibold text-[#ebdcae] code-font" id="drawerReadRetries">0</span>
                             </div>
-                            <div class="bg-slate-950 p-2 rounded-lg border border-slate-800/80">
-                                <span class="block text-[10px] uppercase text-slate-500 tracking-wider">Unrecovered Read</span>
+                            <div class="bg-[#1c100a] p-2 rounded-lg border border-[#8c6a4a]/30">
+                                <span class="block text-[9px] uppercase text-[#c2ab95] tracking-wider">Unrecovered</span>
                                 <span class="text-sm font-semibold code-font" id="drawerUnrecoveredReads">0</span>
                             </div>
                         </div>
@@ -381,33 +474,33 @@
             </div>
 
             <!-- Volume Traceability and Hardware Specifications -->
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
-                <h4 class="text-sm font-semibold text-white flex items-center gap-2 border-b border-slate-800 pb-2">
-                    <i data-lucide="info" class="w-4 h-4 text-indigo-500"></i> Media Traceability
+            <div class="bg-[#120a07] border border-[#4d3629] rounded-xl p-4 space-y-3">
+                <h4 class="text-sm font-semibold text-[#b88c56] flex items-center gap-2 border-b border-[#4d3629] pb-2 uppercase tracking-wide">
+                    <i data-lucide="scroll" class="w-4 h-4 text-[#b88c56]"></i> Foundry & Lot Ledger
                 </h4>
                 <div class="grid grid-cols-2 gap-y-3 gap-x-4 text-xs">
                     <div>
-                        <span class="text-slate-500 block">Manufacturer</span>
+                        <span class="text-[#c2ab95] block">Aetheric Maker</span>
                         <span class="text-white font-medium code-font" id="drawerManufacturer">FUJIFILM</span>
                     </div>
                     <div>
-                        <span class="text-slate-500 block">Tape Lot Identifier</span>
+                        <span class="text-[#c2ab95] block">Cylinder Lot Identifier</span>
                         <span class="text-white font-medium code-font" id="drawerLotId">*2268815</span>
                     </div>
                     <div>
-                        <span class="text-slate-500 block">WORM Status</span>
-                        <span class="text-white font-medium code-font" id="drawerWORM">No (Read/Write)</span>
+                        <span class="text-[#c2ab95] block">WORM Status</span>
+                        <span class="text-white font-medium code-font" id="drawerWORM">No (Rewritable)</span>
                     </div>
                     <div>
-                        <span class="text-slate-500 block">Write Protect Flag</span>
-                        <span class="text-white font-medium code-font" id="drawerWriteProtect">Unprotected</span>
+                        <span class="text-[#c2ab95] block">Write Lock Engagement</span>
+                        <span class="text-white font-medium code-font" id="drawerWriteProtect">Disengaged</span>
                     </div>
                     <div>
-                        <span class="text-slate-500 block">Temp Limit Exceeded</span>
+                        <span class="text-[#c2ab95] block">Thermal Limit Warning</span>
                         <span class="text-white font-medium code-font" id="drawerTempExceeded">No</span>
                     </div>
                     <div>
-                        <span class="text-slate-500 block">Thread Count</span>
+                        <span class="text-[#c2ab95] block">Mechanical Thread Count</span>
                         <span class="text-white font-medium code-font" id="drawerThreadCount">0</span>
                     </div>
                 </div>
@@ -415,20 +508,9 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-800 bg-slate-950/30 py-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
-            <p>© 2026 LTO Media Auditing Suite. Data parsed in sandbox storage.</p>
-            <div class="flex gap-4">
-                <a href="#" class="hover:text-slate-300">SCSI SSC-4 Standards</a>
-                <a href="#" class="hover:text-slate-300">HPE Ultrium Documentation</a>
-            </div>
-        </div>
-    </footer>
-
     <!-- JS Logic and Data Initialization -->
     <script>
-        // Fallback LTO tapes in case network fetch experiences rate limits or downtime.
+        // 10 Detailed Initial Pre-loaded tapes parsed comprehensively from the logs
         const preloadedTapes = [
             { 
                 barcode: "ABG100M8", 
@@ -689,6 +771,7 @@
         let personalityFilter = 'all';
         let searchQuery = '';
         let chartInstance = null;
+        let wearChartInstance = null;
         let selectedTapeBarcode = null;
 
         // Initialize App
@@ -710,14 +793,14 @@
             dropzone.addEventListener('click', () => fileInput.click());
             dropzone.addEventListener('dragover', (e) => {
                 e.preventDefault();
-                dropzone.classList.add('border-blue-500', 'bg-slate-900/90');
+                dropzone.classList.add('border-[#b88c56]', 'bg-[#1c0f0a]/50');
             });
             dropzone.addEventListener('dragleave', () => {
-                dropzone.classList.remove('border-blue-500', 'bg-slate-900/90');
+                dropzone.classList.remove('border-[#b88c56]', 'bg-[#1c0f0a]/50');
             });
             dropzone.addEventListener('drop', (e) => {
                 e.preventDefault();
-                dropzone.classList.remove('border-blue-500', 'bg-slate-900/90');
+                dropzone.classList.remove('border-[#b88c56]', 'bg-[#1c0f0a]/50');
                 if (e.dataTransfer.files) {
                     handleFiles(e.dataTransfer.files);
                 }
@@ -817,17 +900,17 @@
             try {
                 // UI Loading state
                 if (!isAuto) {
-                    btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Fetching...`;
+                    btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin inline mr-1"></i> Syncing...`;
                     btn.disabled = true;
                 }
 
                 syncDot.className = "w-2 h-2 rounded-full bg-amber-500 animate-ping";
-                syncStatusText.innerText = "Syncing Live Data...";
+                syncStatusText.innerText = "Spilling Chronology...";
                 
                 statusTxt.innerText = "Querying repository contents...";
-                statusTxt.className = "text-xs text-blue-400 mt-2 min-h-[16px] animate-pulse";
+                statusTxt.className = "text-xs text-[#b88c56] mt-2 min-h-[16px] animate-pulse italic";
                 
-                workspaceDesc.innerHTML = `<span class="flex items-center gap-2"><i data-lucide="loader-2" class="w-4 h-4 animate-spin text-blue-400"></i> Connecting to the public GitHub repository to index all LTO tape logs...</span>`;
+                workspaceDesc.innerHTML = `<span class="flex items-center gap-2 italic"><i data-lucide="loader-2" class="w-4 h-4 animate-spin text-[#b88c56]"></i> Spinning dial. Connecting to Aetheric Repository index to locate tape logs...</span>`;
                 lucide.createIcons();
 
                 // Get list of files in the repo root
@@ -837,8 +920,8 @@
                 
                 // Filter for our target log files
                 const logFiles = files.filter(file => file.name.endsWith('.sg.logs'));
-                statusTxt.innerText = `Found ${logFiles.length} log files. Downloading...`;
-                workspaceDesc.innerHTML = `<span class="flex items-center gap-2"><i data-lucide="loader-2" class="w-4 h-4 animate-spin text-blue-400"></i> Downloading and analyzing ${logFiles.length} telemetry reports...</span>`;
+                statusTxt.innerText = `Mapped ${logFiles.length} telemetry slips. Ingesting...`;
+                workspaceDesc.innerHTML = `<span class="flex items-center gap-2 italic"><i data-lucide="loader-2" class="w-4 h-4 animate-spin text-[#b88c56]"></i> Deciphering ${logFiles.length} physical logs...</span>`;
                 lucide.createIcons();
 
                 // Fetch raw text for all files concurrently
@@ -877,31 +960,31 @@
                 }
 
                 // Restore UI success state
-                statusTxt.innerText = `Successfully synced ${newTapes.length} tapes!`;
-                statusTxt.className = "text-xs text-emerald-400 mt-2 min-h-[16px]";
+                statusTxt.innerText = `Successfully synced ${newTapes.length} volumes!`;
+                statusTxt.className = "text-xs text-emerald-400 mt-2 min-h-[16px] italic";
                 
                 syncDot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
-                syncStatusText.innerText = "Live Sync Active";
+                syncStatusText.innerText = "Aether-Net Active";
                 
-                workspaceDesc.innerHTML = `Successfully fetched and analyzed <strong class="text-white">${newTapes.length} tape logs</strong> directly from your GitHub repository! Visualizations and diagnostic dashboards are fully live.`;
+                workspaceDesc.innerHTML = `Successfully transcribed and deciphered <strong class="text-white">${newTapes.length} separate cylinders</strong> straight from your GitHub repository! All illustrated charts have updated.`;
                 lucide.createIcons();
                 
             } catch (err) {
                 console.error("GitHub Fetch Error:", err);
                 statusTxt.innerText = "Error syncing repository. Rate limited?";
-                statusTxt.className = "text-xs text-rose-400 mt-2 min-h-[16px]";
+                statusTxt.className = "text-xs text-rose-400 mt-2 min-h-[16px] italic";
                 
                 syncDot.className = "w-2 h-2 rounded-full bg-rose-500";
-                syncStatusText.innerText = "Offline Mode / Rate Limited";
+                syncStatusText.innerText = "Disconnected Mode";
                 
-                workspaceDesc.innerHTML = `Could not reach GitHub (likely due to API rate limits or lack of connection). Displaying <strong class="text-white">preloaded fallback telemetry</strong>. Click Sync to retry manual extraction.`;
+                workspaceDesc.innerHTML = `The Aetheric Connection was blocked or rate-limited. Retaining <strong class="text-white">internal illustrated archives</strong>. Press Siphon to attempt manual dial-in.`;
                 lucide.createIcons();
             } finally {
                 // Reset button after delay
                 setTimeout(() => {
-                    btn.innerHTML = `<i data-lucide="cloud-download" class="w-4 h-4"></i> Sync from GitHub`;
+                    btn.innerHTML = `<i data-lucide="sparkles" class="w-4 h-4 inline mr-1"></i> Siphon from Aether-Net`;
                     btn.disabled = false;
-                    statusTxt.className = "text-xs text-slate-500 mt-2 min-h-[16px]";
+                    statusTxt.className = "text-xs text-[#c2ab95] mt-2 min-h-[16px] italic";
                     statusTxt.innerText = "Pulls all .sg.logs from the repo";
                     lucide.createIcons();
                 }, 3000);
@@ -1086,6 +1169,7 @@
             document.getElementById('metricCriticalTapes').innerText = criticalCount;
 
             document.getElementById('statTotalUsed').innerText = totalUsedTB.toFixed(2);
+            document.getElementById('statTotalCapacity').innerText = totalCapacityTB.toFixed(2);
             document.getElementById('statAvgUtil').innerText = avgUtil.toFixed(1) + "%";
             document.getElementById('statMaxPasses').innerText = maxPasses.toLocaleString();
 
@@ -1159,46 +1243,45 @@
             data.forEach(tape => {
                 const healthInfo = evaluateHealth(tape);
                 const usedTB = tape.used / 1000000;
-                const totalTB = tape.total / 1000000;
 
-                // Health Badge Style
-                let badgeClass = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                // Health Badge Style (Antique Primer Colors)
+                let badgeClass = "bg-[#142318] text-[#55c27f] border border-[#2b593a]";
                 let badgeIcon = "check-circle";
                 if (healthInfo.status === 'warning') {
-                    badgeClass = "bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                    badgeClass = "bg-[#2b1f13] text-[#d49a55] border border-[#5c3e24]";
                     badgeIcon = "alert-triangle";
                 } else if (healthInfo.status === 'critical') {
-                    badgeClass = "bg-rose-500/10 text-rose-400 border border-rose-500/20 animate-pulse";
+                    badgeClass = "bg-[#331113] text-[#e0656a] border border-[#6b1e22] animate-pulse";
                     badgeIcon = "x-circle";
                 }
 
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-900/60 border-b border-slate-800/40 transition cursor-pointer group";
+                tr.className = "hover:bg-[#1a0f0a]/80 border-b border-[#4d3629]/40 transition cursor-pointer group";
                 tr.onclick = () => openDiagnosticDrawer(tape);
                 tr.innerHTML = `
-                    <td class="py-3 px-6 font-semibold text-white code-font group-hover:text-blue-400 transition flex items-center gap-2">
-                        <i data-lucide="hard-drive" class="w-4 h-4 text-slate-500 group-hover:text-blue-500 transition"></i>
+                    <td class="py-3.5 px-6 font-semibold text-[#f5ebd6] code-font group-hover:text-[#b88c56] transition flex items-center gap-2">
+                        <i data-lucide="cylinder" class="w-4 h-4 text-[#8c6a4a] group-hover:text-[#b88c56] transition"></i>
                         ${tape.barcode}
                     </td>
-                    <td class="py-3 px-6">
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ${badgeClass}">
+                    <td class="py-3.5 px-6">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold font-serif ${badgeClass}">
                             <i data-lucide="${badgeIcon}" class="w-3 h-3"></i>
                             ${healthInfo.status.toUpperCase()}
                         </span>
                     </td>
-                    <td class="py-3 px-6 text-slate-300">
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ${tape.personality === 'LTOM8G8' ? 'bg-amber-400/10 text-amber-400 border border-amber-400/20' : 'bg-blue-400/10 text-blue-400 border border-blue-400/20'}">
+                    <td class="py-3.5 px-6 text-[#c2ab95] font-serif">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ${tape.personality === 'LTOM8G8' ? 'bg-[#2b1f13] text-[#ebdcae] border border-[#5c3e24]' : 'bg-[#141b23] text-[#8cb8d4] border border-[#243c5c]'}">
                             ${tape.personality}
                         </span>
                     </td>
-                    <td class="py-3 px-6 text-right text-slate-300 font-medium code-font">${formatVolume(tape.written)}</td>
-                    <td class="py-3 px-6 text-right text-white font-semibold code-font">${usedTB.toFixed(2)} TB</td>
-                    <td class="py-3 px-6 text-right text-slate-400 code-font">
-                        <span class="${tape.begPasses > 3000 ? 'text-amber-400 font-semibold' : ''}">${tape.begPasses.toLocaleString()}</span>
+                    <td class="py-3.5 px-6 text-right text-[#c2ab95] font-medium code-font">${formatVolume(tape.written)}</td>
+                    <td class="py-3.5 px-6 text-right text-white font-semibold code-font">${usedTB.toFixed(2)} TB</td>
+                    <td class="py-3.5 px-6 text-right text-[#c2ab95] code-font">
+                        <span class="${tape.begPasses > 3000 ? 'text-[#d49a55] font-semibold' : ''}">${tape.begPasses.toLocaleString()}</span>
                     </td>
-                    <td class="py-3 px-6 text-center text-xs text-slate-400 font-medium">
-                        <span class="text-blue-500 group-hover:underline flex items-center justify-center gap-1">
-                            Analyze <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                    <td class="py-3.5 px-6 text-center text-xs text-[#c2ab95] font-medium font-serif">
+                        <span class="text-[#b88c56] group-hover:underline flex items-center justify-center gap-1">
+                            Inspect <i data-lucide="feather" class="w-3.5 h-3.5"></i>
                         </span>
                     </td>
                 `;
@@ -1234,19 +1317,19 @@
 
             // Set Text elements
             document.getElementById('drawerBarcode').innerText = tape.barcode;
-            document.getElementById('drawerSerial').innerText = `Serial: ${tape.serial || "Unknown"}`;
+            document.getElementById('drawerSerial').innerText = `Serial Code: ${tape.serial || "Unknown"}`;
             document.getElementById('drawerManufacturer').innerText = tape.manufacturer || "FUJIFILM";
             document.getElementById('drawerLotId').innerText = tape.lotId || "N/A";
             document.getElementById('drawerWORM').innerText = tape.worm > 0 ? "Yes (Write Once)" : "No (Rewritable)";
             document.getElementById('drawerWriteProtect').innerText = tape.writeProtect > 0 ? "Protected" : "Unprotected";
-            document.getElementById('drawerTempExceeded').innerText = tape.tempExceeded > 0 ? "YES (Warning)" : "No (Normal)";
+            document.getElementById('drawerTempExceeded').innerText = tape.tempExceeded > 0 ? "YES (Exceeded)" : "No (Nominal)";
             document.getElementById('drawerThreadCount').innerText = tape.threadCount || "0";
 
             // Wear statistics
             document.getElementById('drawerBegPasses').innerText = tape.begPasses.toLocaleString();
             document.getElementById('drawerMidPasses').innerText = tape.midPasses.toLocaleString();
 
-            // Calculate wear percentages (threshold warnings capped at max 100% of nominal 10k pass-limit)
+            // Calculate wear percentages
             const begPassPercent = Math.min((tape.begPasses / 10000) * 100, 100);
             const midPassPercent = Math.min((tape.midPasses / 10000) * 100, 100);
             
@@ -1256,8 +1339,8 @@
             midBar.style.width = `${midPassPercent}%`;
 
             // Adjust Bar Colors dynamically on wear thresholds
-            begBar.className = tape.begPasses > 5000 ? "bg-amber-500 h-full rounded-full" : "bg-blue-500 h-full rounded-full";
-            midBar.className = tape.midPasses > 3000 ? "bg-amber-500 h-full rounded-full" : "bg-indigo-500 h-full rounded-full";
+            begBar.className = tape.begPasses > 5000 ? "bg-gradient-to-r from-[#d97706] to-[#b8464b] h-full rounded-full" : "bg-gradient-to-r from-[#b88c56] to-[#d49a55] h-full rounded-full";
+            midBar.className = tape.midPasses > 3000 ? "bg-gradient-to-r from-[#d97706] to-[#b8464b] h-full rounded-full" : "bg-gradient-to-r from-[#8c6a4a] to-[#ebdcae] h-full rounded-full";
 
             // Retries & Error Diagnostic metrics
             document.getElementById('drawerWriteRetries').innerText = tape.writeRetries.toLocaleString();
@@ -1265,13 +1348,13 @@
             
             const unrecWriteElem = document.getElementById('drawerUnrecoveredWrites');
             unrecWriteElem.innerText = tape.unrecoveredWrites.toLocaleString();
-            unrecWriteElem.className = tape.unrecoveredWrites > 0 ? "text-rose-400 font-bold" : "text-slate-400";
+            unrecWriteElem.className = tape.unrecoveredWrites > 0 ? "text-rose-400 font-bold" : "text-[#ebdcae]";
 
             document.getElementById('drawerReadRetries').innerText = tape.readRetries.toLocaleString();
             
             const unrecReadElem = document.getElementById('drawerUnrecoveredReads');
             unrecReadElem.innerText = tape.unrecoveredReads.toLocaleString();
-            unrecReadElem.className = tape.unrecoveredReads > 0 ? "text-rose-400 font-bold" : "text-slate-400";
+            unrecReadElem.className = tape.unrecoveredReads > 0 ? "text-rose-400 font-bold" : "text-[#ebdcae]";
 
             // Calculated ratios for performance metrics
             const wrRatio = tape.datasetsWritten > 0 ? ((tape.writeRetries / tape.datasetsWritten) * 100).toFixed(4) : "0.00";
@@ -1289,20 +1372,20 @@
             const headerIcon = document.getElementById('drawerHeaderIcon');
 
             if (healthRating.status === 'healthy') {
-                badge.className = "px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-                headerIconContainer.className = "p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-                headerIcon.setAttribute('data-lucide', 'check-circle');
-                document.getElementById('drawerHealthAdvice').innerText = "Telemetry and wear indexes represent healthy tape mechanics. Read & write corrected error overhead is inside the nominal range.";
+                badge.className = "px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#142318] text-[#55c27f] border border-[#2b593a]";
+                headerIconContainer.className = "p-2 rounded-lg bg-[#142318] text-[#55c27f] border border-[#2b593a]";
+                headerIcon.setAttribute('data-lucide', 'compass');
+                document.getElementById('drawerHealthAdvice').innerText = "Telemetry and ribbon tension indicators describe a healthy spindle matrix. Read & write clockwork correction overhead is perfectly nominal.";
             } else if (healthRating.status === 'warning') {
-                badge.className = "px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-400/20";
-                headerIconContainer.className = "p-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-400/20";
-                headerIcon.setAttribute('data-lucide', 'alert-triangle');
-                document.getElementById('drawerHealthAdvice').innerText = `Warning conditions present: ${healthRating.text}. Highly recommend active scheduling for secondary archival replication. Monitor write retries.`;
+                badge.className = "px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#2b1f13] text-[#d49a55] border border-[#5c3e24]";
+                headerIconContainer.className = "p-2 rounded-lg bg-[#2b1f13] text-[#d49a55] border border-[#5c3e24]";
+                headerIcon.setAttribute('data-lucide', 'gauge');
+                document.getElementById('drawerHealthAdvice').innerText = `Spindle anomalies observed: ${healthRating.text}. Proactive replication to secondary mechanical reservoirs is highly advised to avoid ribbon degradation.`;
             } else {
-                badge.className = "px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20 animate-pulse";
-                headerIconContainer.className = "p-2 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/20";
-                headerIcon.setAttribute('data-lucide', 'x-circle');
-                document.getElementById('drawerHealthAdvice').innerText = `CRITICAL FAULT: ${healthRating.text}. Media failure occurred or environmental limits were exceeded. Perform tape recovery processes immediately.`;
+                badge.className = "px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#331113] text-[#e0656a] border border-[#6b1e22] animate-pulse";
+                headerIconContainer.className = "p-2 rounded-lg bg-[#331113] text-[#e0656a] border border-[#6b1e22]";
+                headerIcon.setAttribute('data-lucide', 'flame');
+                document.getElementById('drawerHealthAdvice').innerText = `CRITICAL FAILURE DETECTED: ${healthRating.text}. Structural ribbon integrity may be compromised. Halt drive spin and invoke immediate alchemical recovery protocols.`;
             }
             lucide.createIcons();
 
@@ -1326,7 +1409,7 @@
             }, 300);
         }
 
-        // Plot Visualization Generator
+        // Plot Visualization Generator (Renders Capacity and wear charts simultaneously)
         function renderChart() {
             const canvas = document.getElementById('capacityChart');
             const sortSelection = document.getElementById('chartSort').value;
@@ -1361,8 +1444,8 @@
 
             const ctx = canvas.getContext('2d');
             const usedGradient = ctx.createLinearGradient(0, 0, 0, 400);
-            usedGradient.addColorStop(0, 'rgba(59, 130, 246, 0.85)'); 
-            usedGradient.addColorStop(1, 'rgba(99, 102, 241, 0.45)'); 
+            usedGradient.addColorStop(0, 'rgba(212, 154, 85, 0.85)'); // Vickers Gold
+            usedGradient.addColorStop(1, 'rgba(140, 106, 74, 0.45)'); // Aged Bronze
 
             chartInstance = new Chart(canvas, {
                 type: 'bar',
@@ -1370,21 +1453,21 @@
                     labels: barcodes,
                     datasets: [
                         {
-                            label: 'Used Capacity (TB)',
+                            label: 'Consumed Space (TB)',
                             data: capacities,
                             backgroundColor: usedGradient,
-                            borderColor: '#3b82f6',
-                            borderWidth: 1,
-                            borderRadius: 4,
+                            borderColor: '#8c6a4a',
+                            borderWidth: 1.5,
+                            borderRadius: 2,
                             stack: 'Stack 0',
                         },
                         {
-                            label: 'Remaining Capacity (TB)',
+                            label: 'Empty Reservoir (TB)',
                             data: remainingCapacities,
-                            backgroundColor: 'rgba(30, 41, 59, 0.4)', 
-                            borderColor: '#475569', 
+                            backgroundColor: 'rgba(74, 46, 28, 0.25)', 
+                            borderColor: 'rgba(140, 106, 74, 0.3)', 
                             borderWidth: 1,
-                            borderRadius: 4,
+                            borderRadius: 2,
                             stack: 'Stack 0',
                         }
                     ]
@@ -1396,20 +1479,21 @@
                         legend: {
                             position: 'top',
                             labels: {
-                                color: '#94a3b8',
+                                color: '#c2ab95',
                                 font: {
-                                    family: 'Inter',
-                                    size: 11
+                                    family: 'EB Garamond',
+                                    size: 13,
+                                    style: 'italic'
                                 }
                             }
                         },
                         tooltip: {
                             mode: 'index',
                             intersect: false,
-                            backgroundColor: '#0f172a',
-                            titleColor: '#ffffff',
-                            bodyColor: '#cbd5e1',
-                            borderColor: '#334155',
+                            backgroundColor: '#170e0a',
+                            titleColor: '#f5ebd6',
+                            bodyColor: '#c2ab95',
+                            borderColor: '#8c6a4a',
                             borderWidth: 1,
                             callbacks: {
                                 label: function(context) {
@@ -1432,7 +1516,7 @@
                                 display: false
                             },
                             ticks: {
-                                color: '#64748b',
+                                color: '#c2ab95',
                                 font: {
                                     family: 'JetBrains Mono',
                                     size: 10
@@ -1442,16 +1526,153 @@
                         y: {
                             stacked: true,
                             grid: {
-                                color: '#1e293b'
+                                color: '#2d1b11'
                             },
                             ticks: {
-                                color: '#64748b',
+                                color: '#c2ab95',
                                 font: {
-                                    family: 'Inter',
-                                    size: 11
+                                    family: 'EB Garamond',
+                                    size: 12
                                 },
                                 callback: function(value) {
                                     return value + ' TB';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Trigger Media Wear Chart rendering to stay in alphabetical sync
+            renderWearChart(sortSelection);
+        }
+
+        // Render Media Wear chart
+        function renderWearChart(sortSelection) {
+            const canvas = document.getElementById('wearChart');
+            let data = getAllTapes();
+
+            if (activeFilter !== 'all') {
+                data = data.filter(t => evaluateHealth(t).status === activeFilter);
+            }
+            if (personalityFilter !== 'all') {
+                data = data.filter(t => t.personality === personalityFilter);
+            }
+            if (searchQuery) {
+                data = data.filter(t => t.barcode.toLowerCase().includes(searchQuery));
+            }
+
+            // Apply sorting specifically for wear metrics: sort by Beginning of Medium Passes
+            if (sortSelection === 'desc') {
+                data.sort((a, b) => b.begPasses - a.begPasses);
+            } else if (sortSelection === 'asc') {
+                data.sort((a, b) => a.begPasses - b.begPasses);
+            } else {
+                data.sort((a, b) => a.barcode.localeCompare(b.barcode));
+            }
+
+            const barcodes = data.map(t => t.barcode);
+            const begPasses = data.map(t => t.begPasses);
+            const midPasses = data.map(t => t.midPasses);
+
+            if (wearChartInstance) {
+                wearChartInstance.destroy();
+            }
+
+            const ctx = canvas.getContext('2d');
+            const begGradient = ctx.createLinearGradient(0, 0, 0, 400);
+            begGradient.addColorStop(0, 'rgba(217, 119, 6, 0.85)'); // Copper/Amber 600
+            begGradient.addColorStop(1, 'rgba(125, 89, 48, 0.45)'); // Dark Spindle Brown
+
+            const midGradient = ctx.createLinearGradient(0, 0, 0, 400);
+            midGradient.addColorStop(0, 'rgba(140, 106, 74, 0.85)'); // Bronze
+            midGradient.addColorStop(1, 'rgba(42, 26, 17, 0.45)'); // Spindle Charcoal
+
+            wearChartInstance = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels: barcodes,
+                    datasets: [
+                        {
+                            label: 'Beginning of Spindle Domain (Passes)',
+                            data: begPasses,
+                            backgroundColor: begGradient,
+                            borderColor: '#b88c56',
+                            borderWidth: 1.5,
+                            borderRadius: 2,
+                        },
+                        {
+                            label: 'Middle Spindle Domain (Passes)',
+                            data: midPasses,
+                            backgroundColor: midGradient,
+                            borderColor: '#8c6a4a',
+                            borderWidth: 1,
+                            borderRadius: 2,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#c2ab95',
+                                font: {
+                                    family: 'EB Garamond',
+                                    size: 13,
+                                    style: 'italic'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: '#170e0a',
+                            titleColor: '#f5ebd6',
+                            bodyColor: '#c2ab95',
+                            borderColor: '#8c6a4a',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== undefined) {
+                                        label += context.parsed.y.toLocaleString() + ' passes';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#c2ab95',
+                                font: {
+                                    family: 'JetBrains Mono',
+                                    size: 10
+                                }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: '#2d1b11'
+                            },
+                            ticks: {
+                                color: '#c2ab95',
+                                font: {
+                                    family: 'EB Garamond',
+                                    size: 12
+                                },
+                                callback: function(value) {
+                                    return value.toLocaleString() + ' passes';
                                 }
                             }
                         }
